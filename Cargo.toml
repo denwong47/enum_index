@@ -1,0 +1,20 @@
+[package]
+name = "enum_index"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "enum_index"
+path = "src/main.rs"
+
+[lib]
+name = "enum_index"
+
+[dependencies]
+enum_index_types = { version = "0", path = "enum_index_types", default-features = true, optional = false }
+enum_index_macros = { version = "0", path = "enum_index_macros", default-features = true, optional = false }
+
+[workspace]
+members = [ "enum_index_macros", "enum_index_types" ]
