@@ -10,6 +10,6 @@ name = "enum_index_macros"
 proc-macro = true
 
 [dependencies]
-syn = { version = "1", features = ["derive", "extra-traits"] }
+syn = { version = "1", features = ["full", "extra-traits"] }
 quote = "1"
 enum_index_types = { version = "0", path = "../enum_index_types" }

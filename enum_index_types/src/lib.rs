@@ -4,6 +4,7 @@
 //!
 
 pub mod errors;
+pub use errors::*;
 
 mod traits;
 pub use traits::*;
