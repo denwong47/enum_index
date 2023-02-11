@@ -2,6 +2,9 @@
 
 ![CI Checks](https://github.com/denwong47/enum_index/actions/workflows/CI.yml/badge.svg?branch=main)
 
+> ## Documentation available
+> ...at [Github Pages](https://denwong47.github.io/enum_index/enum_index/).
+
 This library provides a simple derive macro to add methods for bi-directional mapping between Enum variants and their respective values.
 
 While Rust provides C-Like enums, they are only available for `isize` values.
