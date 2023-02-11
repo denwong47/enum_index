@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["enum_index","enum_index_macros","enum_index_types"];
