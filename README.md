@@ -7,7 +7,7 @@ This library provides a simple derive macro to add methods for bi-directional ma
 While Rust provides C-Like enums, they are only available for `isize` values.
 
 To allow this for other types, one can:
-//!
+
 - `impl` a [`From`] and [`TryFrom`] both ways, `match`ing values back and forth.
   This however duplicates the values in both `impl`, reducing maintainability.
 - use [`EnumIter`] derive macro on the enum, and perform a `.iter().find()` during
@@ -26,7 +26,7 @@ Example
 -------
 
 ```rust
-use enum_index::EnumIndex;
+use enum_index::*;
 
 type OptionalChar = Option<char>;
 
