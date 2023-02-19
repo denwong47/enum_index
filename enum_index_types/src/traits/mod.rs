@@ -4,3 +4,6 @@
 
 mod enum_index;
 pub use enum_index::*;
+
+mod variant_by_name;
+pub use variant_by_name::*;

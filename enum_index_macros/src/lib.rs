@@ -11,7 +11,7 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
-use quote::quote;
+use quote::{format_ident, quote};
 use syn;
 use syn::{parse_macro_input, DeriveInput};
 
@@ -123,7 +123,7 @@ pub fn enum_index(input: TokenStream) -> TokenStream {
     // =================================================================================
     // Resolving #[index(index)]:
 
-    let (match_to_index, match_from_index) = {
+    let (match_to_index, match_from_index, match_from_name) = {
         enum_data.variants.iter().map(|variant| {
             (
                 variant,
@@ -139,6 +139,7 @@ pub fn enum_index(input: TokenStream) -> TokenStream {
             let index = index_attribute.expr();
 
             (
+                // match_to_index
                 if params.is_type("String") && func::is_lit_str(index) {
                     quote!(
                         Self::#variant_name=>#index.to_string(),
@@ -148,15 +149,25 @@ pub fn enum_index(input: TokenStream) -> TokenStream {
                         Self::#variant_name=>#index,
                     )
                 },
+                // match_from_index
                 quote!(
                     #index=>Some(Self::#variant_name),
                 ),
+                // match_from_name
+                {
+                    let ident_str = format_ident!("{}", variant_name).to_string();
+                    let ident_ref = &ident_str;
+                    quote!(
+                        #ident_ref=>Some(Self::#variant_name),
+                    )
+                },
             )
         },
     )
-    .fold((quote!(), quote!()), |mut lhs, rhs| {
+    .fold((quote!(), quote!(), quote!()), |mut lhs, rhs| {
         lhs.0.extend(rhs.0);
         lhs.1.extend(rhs.1);
+        lhs.2.extend(rhs.2);
         lhs
     });
 
@@ -179,6 +190,14 @@ pub fn enum_index(input: TokenStream) -> TokenStream {
             }
         }
         impl EnumIndex for #name {}
+        impl VariantByName for #name {
+            fn by_name(name: &str) -> Option<Self> {
+                match name {
+                    #match_from_name
+                    _ => None
+                }
+            }
+        }
         impl From<#name> for #return_type {
             fn from(index: #name) -> Self {
                 index.index()

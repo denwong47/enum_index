@@ -40,10 +40,16 @@ macro_rules! test_factory {
 
                 // Assert TryFrom works
                 assert_eq!(TestEnum::try_from(&$index).ok(), Some(TestEnum::$variant));
+
+                // Assert VariantByName works
+                assert_eq!(TestEnum::by_name(stringify!($variant)), Some(TestEnum::$variant));
                 )*
 
                 // Assert whatever not found is not foun
                 assert!(TestEnum::try_from(&$bad_index).is_err());
+
+                // Assert bad variant name as [`None`]
+                assert!(TestEnum::by_name("").is_none());
             }
         }
     };
@@ -161,10 +167,16 @@ macro_rules! test_string_factory {
 
                 // Assert TryFrom works
                 assert_eq!(TestEnum::try_from($index).ok(), Some(TestEnum::$variant));
+
+                // Assert VariantByName works
+                assert_eq!(TestEnum::by_name(stringify!($variant)), Some(TestEnum::$variant));
                 )*
 
-                // Assert whatever not found is not foun
+                // Assert whatever not found is not found
                 assert!(TestEnum::try_from($bad_index).is_err());
+
+                // Assert bad variant name as [`None`]
+                assert!(TestEnum::by_name("").is_none());
             }
         }
     };

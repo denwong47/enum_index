@@ -61,6 +61,17 @@
 //!     SpecialChar::try_from(&Some('A')).is_err()
 //! );
 //!
+//! // Look up a variant using its name
+//! assert_eq!(
+//!     // Returns a Option<SpecialChar>
+//!     SpecialChar::by_name("CarriageReturn"),
+//!     Some(SpecialChar::CarriageReturn),
+//! );
+//!
+//! // Look up a variant name that does not exist
+//! assert!(
+//!     SpecialChar::by_name("I don't exist").is_none()
+//! );
 //! ```
 //!
 //! In order for this to work, the following requirements need to be met:
