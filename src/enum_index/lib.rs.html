@@ -99,6 +99,17 @@
 <a href="#99" id="99">99</a>
 <a href="#100" id="100">100</a>
 <a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
 </pre><pre class="rust"><code><span class="doccomment">//! This library provides a simple derive macro to map Enum variants to static indices in both directions.
 //!
 //! While Rust provides C-Like enums, they are only available for `isize` indices.
@@ -162,6 +173,17 @@
 //!     SpecialChar::try_from(&amp;Some(&#39;A&#39;)).is_err()
 //! );
 //!
+//! // Look up a variant using its name
+//! assert_eq!(
+//!     // Returns a Option&lt;SpecialChar&gt;
+//!     SpecialChar::by_name(&quot;CarriageReturn&quot;),
+//!     Some(SpecialChar::CarriageReturn),
+//! );
+//!
+//! // Look up a variant name that does not exist
+//! assert!(
+//!     SpecialChar::by_name(&quot;I don&#39;t exist&quot;).is_none()
+//! );
 //! ```
 //!
 //! In order for this to work, the following requirements need to be met:

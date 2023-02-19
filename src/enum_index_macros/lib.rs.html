@@ -198,6 +198,25 @@
 <a href="#198" id="198">198</a>
 <a href="#199" id="199">199</a>
 <a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
 </pre><pre class="rust"><code><span class="doccomment">//! This is where [`EnumIndex`] is actually declared.
 //!
 //! This crate is a `proc-macro` library, hence cannot export anything other than the
@@ -211,7 +230,7 @@
 </span><span class="kw">extern crate </span>proc_macro;
 
 <span class="kw">use </span>proc_macro::TokenStream;
-<span class="kw">use </span>quote::quote;
+<span class="kw">use </span>quote::{format_ident, quote};
 <span class="kw">use </span>syn;
 <span class="kw">use </span>syn::{parse_macro_input, DeriveInput};
 
@@ -323,7 +342,7 @@
     <span class="comment">// =================================================================================
     // Resolving #[index(index)]:
 
-    </span><span class="kw">let </span>(match_to_index, match_from_index) = {
+    </span><span class="kw">let </span>(match_to_index, match_from_index, match_from_name) = {
         enum_data.variants.iter().map(|variant| {
             (
                 variant,
@@ -339,7 +358,8 @@
             <span class="kw">let </span>index = index_attribute.expr();
 
             (
-                <span class="kw">if </span>params.is_type(<span class="string">&quot;String&quot;</span>) &amp;&amp; func::is_lit_str(index) {
+                <span class="comment">// match_to_index
+                </span><span class="kw">if </span>params.is_type(<span class="string">&quot;String&quot;</span>) &amp;&amp; func::is_lit_str(index) {
                     <span class="macro">quote!</span>(
                         <span class="self">Self</span>::#variant_name=&gt;#index.to_string(),
                     )
@@ -348,15 +368,25 @@
                         <span class="self">Self</span>::#variant_name=&gt;#index,
                     )
                 },
-                <span class="macro">quote!</span>(
+                <span class="comment">// match_from_index
+                </span><span class="macro">quote!</span>(
                     #index=&gt;<span class="prelude-val">Some</span>(<span class="self">Self</span>::#variant_name),
                 ),
+                <span class="comment">// match_from_name
+                </span>{
+                    <span class="kw">let </span>ident_str = <span class="macro">format_ident!</span>(<span class="string">&quot;{}&quot;</span>, variant_name).to_string();
+                    <span class="kw">let </span>ident_ref = <span class="kw-2">&amp;</span>ident_str;
+                    <span class="macro">quote!</span>(
+                        #ident_ref=&gt;<span class="prelude-val">Some</span>(<span class="self">Self</span>::#variant_name),
+                    )
+                },
             )
         },
     )
-    .fold((<span class="macro">quote!</span>(), <span class="macro">quote!</span>()), |<span class="kw-2">mut </span>lhs, rhs| {
+    .fold((<span class="macro">quote!</span>(), <span class="macro">quote!</span>(), <span class="macro">quote!</span>()), |<span class="kw-2">mut </span>lhs, rhs| {
         lhs.<span class="number">0</span>.extend(rhs.<span class="number">0</span>);
         lhs.<span class="number">1</span>.extend(rhs.<span class="number">1</span>);
+        lhs.<span class="number">2</span>.extend(rhs.<span class="number">2</span>);
         lhs
     });
 
@@ -379,6 +409,14 @@
             }
         }
         <span class="kw">impl </span>EnumIndex <span class="kw">for </span>#name {}
+        <span class="kw">impl </span>VariantByName <span class="kw">for </span>#name {
+            <span class="kw">fn </span>by_name(name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
+                <span class="kw">match </span>name {
+                    #match_from_name
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">None
+                </span>}
+            }
+        }
         <span class="kw">impl </span>From&lt;#name&gt; <span class="kw">for </span>#return_type {
             <span class="kw">fn </span>from(index: #name) -&gt; <span class="self">Self </span>{
                 index.index()
