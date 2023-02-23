@@ -49,13 +49,13 @@ use structs::IndexAttribute;
 ///     MEMBER1,
 /// }
 /// impl MyEnum {
-///     fn index(&self) -> String {
+///     pub fn index(&self) -> String {
 ///         match self {
 ///             Self::MEMBER0 => "Member 0".to_string(),
 ///             Self::MEMBER1 => "Member 1".to_string(),
 ///         }
 ///     }
-///     fn from_index(index: &str) -> Option<Self> {
+///     pub fn from_index(index: &str) -> Option<Self> {
 ///         match index {
 ///             "Member 0" => Some(Self::MEMBER0),
 ///             "Member 1" => Some(Self::MEMBER1),
