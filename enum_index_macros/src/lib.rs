@@ -212,6 +212,28 @@ pub fn enum_index(input: TokenStream) -> TokenStream {
                 )
             }
         }
+        impl serde::Serialize for #name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer,
+            {
+                self.index().serialize(serializer)
+            }
+        }
+        impl<'de> serde::Deserialize<'de> for #name {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                #return_type::deserialize(deserializer)
+                .and_then(
+                    | index | Self::try_from(&index as #return_type_ref)
+                              .map_err(
+                                |err| serde::de::Error::custom(err)
+                              )
+                )
+            }
+        }
     };
 
     // Hand the output tokens back to the compiler
