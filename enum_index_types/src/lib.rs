@@ -11,3 +11,5 @@ pub use traits::*;
 
 mod structs;
 pub use structs::*;
+
+pub mod serde;

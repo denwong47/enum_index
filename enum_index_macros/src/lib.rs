@@ -49,13 +49,13 @@ use structs::IndexAttribute;
 ///     MEMBER1,
 /// }
 /// impl MyEnum {
-///     fn index(&self) -> String {
+///     pub fn index(&self) -> String {
 ///         match self {
 ///             Self::MEMBER0 => "Member 0".to_string(),
 ///             Self::MEMBER1 => "Member 1".to_string(),
 ///         }
 ///     }
-///     fn from_index(index: &str) -> Option<Self> {
+///     pub fn from_index(index: &str) -> Option<Self> {
 ///         match index {
 ///             "Member 0" => Some(Self::MEMBER0),
 ///             "Member 1" => Some(Self::MEMBER1),
@@ -209,6 +209,28 @@ pub fn enum_index(input: TokenStream) -> TokenStream {
                 Self::from_index(&index)
                 .ok_or(
                     EnumIndexError::IndexNotFound(format!("{:?}", index))
+                )
+            }
+        }
+        impl serde::Serialize for #name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer,
+            {
+                self.index().serialize(serializer)
+            }
+        }
+        impl<'de> serde::Deserialize<'de> for #name {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                #return_type::deserialize(deserializer)
+                .and_then(
+                    | index | Self::try_from(&index as #return_type_ref)
+                              .map_err(
+                                |err| serde::de::Error::custom(err)
+                              )
                 )
             }
         }

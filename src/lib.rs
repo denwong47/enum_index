@@ -108,5 +108,3 @@ pub mod prelude;
 
 pub use enum_index_macros::*;
 pub use enum_index_types::*;
-
-mod tests;

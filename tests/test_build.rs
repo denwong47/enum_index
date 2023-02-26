@@ -12,7 +12,7 @@ macro_rules! test_factory {
         #[cfg(test)]
         mod $name {
             extern crate proc_macro;
-            use crate::prelude::*;
+            use enum_index::prelude::*;
 
             #[allow(dead_code)]
             type OptionalChar = Option<char>;
@@ -142,7 +142,7 @@ macro_rules! test_string_factory {
         // #[cfg(test)]
         mod $name {
             extern crate proc_macro;
-            use crate::prelude::*;
+            use enum_index::prelude::*;
 
             #[derive(Debug, EnumIndex, PartialEq)]
             #[index_type($type)]
