@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":[["Error","The `Error` trait allows `Deserialize` implementations to create descriptive error messages belonging to the `Deserializer` against which they are currently running."]]};

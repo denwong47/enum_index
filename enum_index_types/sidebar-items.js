@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["errors",""]],"trait":[["EnumIndex","Marker Trait only."],["VariantByName","Get an Enum Variant by name in [`str`]."]]};
+window.SIDEBAR_ITEMS = {"mod":[["errors",""],["serde",""]],"trait":[["EnumIndex","Marker Trait only."],["VariantByName","Get an Enum Variant by name in [`str`]."]]};
