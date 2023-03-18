@@ -20,21 +20,20 @@ pub struct EnumIndexParams {
     pub value_ident: syn::Ident,
     pub index_type: syn::Type,
 }
+
 impl syn::parse::Parse for EnumIndexParams {
     fn parse(input: syn::parse::ParseStream) -> Result<Self, syn::parse::Error> {
-        let content;
+        let paren_content = func::parse_parenthesized_attribute(input, "index_type")?;
 
-        syn::parenthesized!(content in input);
-
-        let is_ref = content.lookahead1().peek(syn::Token![&]);
+        let is_ref = paren_content.lookahead1().peek(syn::Token![&]);
 
         // Check if the specified type is a &T.
         if is_ref {
-            let _: syn::Token![&] = content.parse()?;
+            let _: syn::Token![&] = paren_content.parse()?;
         }
 
         let value_ident: syn::Ident = {
-            content.parse().or_else(|err| {
+            paren_content.parse().or_else(|err| {
                 Err(syn::parse::Error::new(
                     err.span(),
                     "value type provided in #[index_type(T)] is not a valid Identifier.",
@@ -42,7 +41,7 @@ impl syn::parse::Parse for EnumIndexParams {
             })
         }?;
 
-        let is_complex = content.lookahead1().peek(syn::Token![<]);
+        let is_complex = paren_content.lookahead1().peek(syn::Token![<]);
         if is_complex {
             let msg = format!(
                 "Complex type of `{}<>` detected; please use a Type alias for complex value types.",
@@ -72,7 +71,7 @@ impl EnumIndexParams {
     /// Static method to look for the first attribute that matches its own requirement.
     fn find_attribute(input: &DeriveInput) -> Option<&syn::Attribute> {
         input.attrs.iter().find(|attr| {
-            attr.path.segments.len() == 1 && attr.path.segments[0].ident == "index_type"
+            attr.path().segments.len() == 1 && attr.path().segments[0].ident == "index_type"
         })
     }
 
@@ -116,7 +115,7 @@ impl TryFrom<&DeriveInput> for EnumIndexParams {
             errors::EnumIndexError::ParamsMetaNotFound(value.ident.to_string()),
         )?;
 
-        syn::parse2(attr.tokens.clone())
+        syn::parse2(attr.into_token_stream())
             .map_err(|err| errors::EnumIndexError::SynParseError(value.ident.to_string(), err))
     }
 }

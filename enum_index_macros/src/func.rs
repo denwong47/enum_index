@@ -57,3 +57,48 @@ pub fn is_lit_str(e: &syn::Expr) -> bool {
         _ => false,
     }
 }
+
+/// Parse a #[attr(...)] token structure from a strream.
+pub fn parse_parenthesized_attribute<'a>(
+    input: syn::parse::ParseStream<'a>,
+    expects_ident: &str,
+) -> syn::Result<syn::parse::ParseBuffer<'a>> {
+    let buffer;
+
+    let _pound_token: syn::Token![#] = input.parse().map_err(|_| {
+        input.error(format!(
+            "`#[{}(...)]` expected, but `#` not found.",
+            expects_ident
+        ))
+    })?;
+    let _bracket_token: syn::token::Bracket = syn::bracketed!(buffer in input);
+
+    let content: syn::parse::ParseBuffer = buffer;
+
+    let _is_ident: bool = content.lookahead1().peek(syn::Ident);
+
+    if !_is_ident {
+        return Err(content.error(format!(
+            "`#[{}(...)]` expected, but `{}` not found.",
+            expects_ident, expects_ident
+        )));
+    }
+
+    let index_type_ident: syn::Ident = content.parse()?;
+
+    if &index_type_ident.to_string() != expects_ident {
+        return Err(syn::parse::Error::new(
+            index_type_ident.span(),
+            format!(
+                "`#[{}(...)]` expected, but `{}` found instead.",
+                expects_ident, index_type_ident
+            ),
+        ));
+    }
+
+    #[allow(unused_variables)]
+    let paren_content: syn::parse::ParseBuffer<'a>;
+    let _parens = syn::parenthesized!(paren_content in content);
+
+    Ok(paren_content)
+}
